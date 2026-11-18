@@ -1,7 +1,7 @@
 id,fecha_hora,tipo,archivos,portada,texto,estado,ig_media_id,publicado_en,nota
 h-11-18-09,2026-11-18 09:00,HISTORIA,historia-s02.jpg,,,publicado,18101946974430366,2026-11-18 09:29,
 c1-antes-vs-hoy,2026-11-18 09:30,CARRUSEL,c1-antes-vs-hoy-01.jpg|c1-antes-vs-hoy-02.jpg|c1-antes-vs-hoy-03.jpg|c1-antes-vs-hoy-04.jpg|c1-antes-vs-hoy-05.jpg,,c1-antes-vs-hoy.txt,publicado,18121599830587623,2026-11-18 09:31,
-h-11-18-11,2026-11-18 11:30,HISTORIA,historia-s03.jpg,,,programado,,,
+h-11-18-11,2026-11-18 11:30,HISTORIA,historia-s03.jpg,,,error,,,HTTP 400: API access blocked.
 h-11-18-15,2026-11-18 15:00,HISTORIA,historia-s10.jpg,,,programado,,,
 h-11-18-19,2026-11-18 19:00,HISTORIA,historia-s04.jpg,,,programado,,,
 h-11-18-21,2026-11-18 21:30,HISTORIA,historia-s01.jpg,,,programado,,,
