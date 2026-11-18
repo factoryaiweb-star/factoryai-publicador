@@ -1,14 +1,15 @@
 """Publicador propio de Factory AI Web (reemplazo gratuito de Metricool para Instagram).
 
 Lee `calendario.csv`, y cada publicación con estado `programado` cuya hora ya llegó
-la publica en Instagram con la API oficial (Instagram API with Instagram Login).
+la publica en Instagram con la API oficial (API de Instagram con inicio de sesión unificado /
+Graph API de Facebook, token de usuario del sistema que no caduca).
 
 Variables de entorno (GitHub Actions → Settings → Secrets and variables → Actions):
-  IG_USER_ID       ID de la cuenta profesional de Instagram (secreto)
-  IG_TOKEN         token de acceso de larga duración (secreto; nunca en el chat ni en el repo)
+  IG_USER_ID       ID de la cuenta de Instagram para empresas (secreto)
+  IG_TOKEN         token de usuario del sistema (secreto; nunca en el chat ni en el repo)
   PUBLIC_BASE_URL  URL pública donde se sirven los archivos, p. ej.
                    https://<usuario>.github.io/<repo>/   (variable, no secreta)
-  API_VERSION      opcional, por defecto v24.0
+  API_BASE         opcional, por defecto https://graph.facebook.com/v24.0
 
 Uso:
   python publicar.py            publica lo que ya toca
@@ -22,7 +23,7 @@ from zoneinfo import ZoneInfo
 TZ = ZoneInfo("America/Santiago")
 CAL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendario.csv")
 TEXTOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "textos")
-API = f"https://graph.instagram.com/{os.environ.get('API_VERSION', 'v24.0')}"
+API = os.environ.get("API_BASE", "https://graph.facebook.com/v24.0").rstrip("/")
 COLS = ["id", "fecha_hora", "tipo", "archivos", "portada", "texto", "estado", "ig_media_id", "publicado_en", "nota"]
 MAX_ATRASO = timedelta(hours=12)  # si se pasó más de esto, no publica y lo marca «atrasado»
 
@@ -154,7 +155,7 @@ def guardar(filas):
 
 def check():
     ig = env("IG_USER_ID")
-    me = call("GET", "me", {"fields": "user_id,username,account_type"})
+    me = call("GET", ig, {"fields": "id,username,name"})
     print("Cuenta:", me)
     lim = call("GET", f"{ig}/content_publishing_limit", {"fields": "quota_usage,config"})
     print("Cupo diario:", lim)

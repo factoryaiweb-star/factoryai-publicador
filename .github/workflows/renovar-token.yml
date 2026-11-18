@@ -1,7 +1,7 @@
 name: Renovar token de Instagram
+# Solo para tokens de Instagram Login (caducan a los 60 días). Con token de usuario
+# del sistema (no caduca) no hace falta: queda solo manual.
 on:
-  schedule:
-    - cron: "17 13 1,15 * *"   # días 1 y 15 de cada mes
   workflow_dispatch: {}
 jobs:
   renovar:
