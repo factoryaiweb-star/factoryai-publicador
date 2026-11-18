@@ -154,7 +154,16 @@ def guardar(filas):
 
 
 def check():
-    ig = env("IG_USER_ID")
+    ig = os.environ.get("IG_USER_ID", "").strip()
+    if not ig:
+        # Busca la cuenta de Instagram para empresas vinculada a las páginas del token
+        r = call("GET", "me/accounts", {"fields": "name,instagram_business_account{id,username}"})
+        for p in r.get("data", []):
+            iga = p.get("instagram_business_account")
+            if iga:
+                print(f"Página «{p.get('name')}» → Instagram @{iga.get('username')} · IG_USER_ID = {iga.get('id')}")
+        print("Copia ese número en el secreto IG_USER_ID.")
+        return
     me = call("GET", ig, {"fields": "id,username,name"})
     print("Cuenta:", me)
     lim = call("GET", f"{ig}/content_publishing_limit", {"fields": "quota_usage,config"})
