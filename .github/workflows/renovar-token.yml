@@ -1,0 +1,20 @@
+name: Renovar token de Instagram
+on:
+  schedule:
+    - cron: "17 13 1,15 * *"   # días 1 y 15 de cada mes
+  workflow_dispatch: {}
+jobs:
+  renovar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        env: { IG_TOKEN: "${{ secrets.IG_TOKEN }}" }
+        run: python renovar_token.py
+      - name: Guardar token nuevo como secreto
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          NUEVO: ${{ steps.r.outputs.token }}
+        run: |
+          echo "::add-mask::$NUEVO"
+          gh secret set IG_TOKEN --body "$NUEVO" --repo "$GITHUB_REPOSITORY"
