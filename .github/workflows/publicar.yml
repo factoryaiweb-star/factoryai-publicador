@@ -1,29 +1,24 @@
 name: Publicar en Instagram
 on:
   schedule:
-    - cron: "*/15 * * * *"   # cada 15 minutos (GitHub puede atrasarse unos minutos)
+    - cron: "0 * * * *"   # arranca cada hora y queda revisando el calendario minuto a minuto
   workflow_dispatch: {}
 permissions:
   contents: write
-concurrency: publicar
+concurrency:
+  group: publicar
+  cancel-in-progress: false
 jobs:
   publicar:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: Publicar lo que toca
+      - name: Publicar lo que toca (revisa cada minuto por ~85 min)
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           PUBLIC_BASE_URL: ${{ vars.PUBLIC_BASE_URL }}
-        run: python publicar.py
-      - name: Guardar estado del calendario
-        run: |
-          if ! git diff --quiet calendario.csv; then
-            git config user.name "publicador"
-            git config user.email "publicador@users.noreply.github.com"
-            git commit -am "calendario: estado actualizado"
-            git push
-          fi
+        run: python publicar.py --loop 5100

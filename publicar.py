@@ -75,7 +75,7 @@ def esperar_listo(container_id, max_seg=600):
             return
         if code in ("ERROR", "EXPIRED"):
             raise RuntimeError(f"Instagram rechazó el archivo: {st.get('status')}")
-        time.sleep(8)
+        time.sleep(5)
     raise RuntimeError("Instagram tardó demasiado en procesar el video")
 
 
@@ -98,12 +98,12 @@ def crear_contenedor(fila, texto):
         a = archivos[0]
         p = {"media_type": "STORIES", ("video_url" if es_video(a) else "image_url"): url_de(a)}
         c = call("POST", f"{ig}/media", p)["id"]
-        if es_video(a):
-            esperar_listo(c)
+        esperar_listo(c)
         return c
 
     if tipo == "POST":
         c = call("POST", f"{ig}/media", {"image_url": url_de(archivos[0]), "caption": texto})["id"]
+        esperar_listo(c)
         return c
 
     if tipo == "CARRUSEL":
@@ -117,14 +117,25 @@ def crear_contenedor(fila, texto):
             else:
                 p["image_url"] = url_de(a)
             h = call("POST", f"{ig}/media", p)["id"]
-            if es_video(a):
-                esperar_listo(h)
+            esperar_listo(h)
             hijos.append(h)
         c = call("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(hijos), "caption": texto})["id"]
         esperar_listo(c)
         return c
 
     raise RuntimeError(f"Tipo desconocido: {tipo} (usa REEL, HISTORIA, POST o CARRUSEL)")
+
+
+def publicar_contenedor(c):
+    # Instagram a veces responde «Media ID is not available» unos segundos después de crear el contenedor
+    for intento in range(6):
+        try:
+            return call("POST", f"{env('IG_USER_ID')}/media_publish", {"creation_id": c})
+        except RuntimeError as e:
+            if "not available" in str(e) and intento < 5:
+                time.sleep(10)
+                continue
+            raise
 
 
 def leer_texto(fila):
@@ -170,10 +181,8 @@ def check():
     print("Cupo diario:", lim)
 
 
-def main():
-    dry = "--dry" in sys.argv
-    if "--check" in sys.argv:
-        return check()
+def ciclo(dry):
+    """Una pasada por el calendario. Devuelve True si cambió algo."""
     ahora = datetime.now(TZ)
     filas = cargar()
     cambios = False
@@ -194,7 +203,7 @@ def main():
         try:
             texto = leer_texto(fl)
             c = crear_contenedor(fl, texto)
-            pub = call("POST", f"{env('IG_USER_ID')}/media_publish", {"creation_id": c})
+            pub = publicar_contenedor(c)
             fl["estado"], fl["ig_media_id"], fl["publicado_en"], fl["nota"] = "publicado", pub.get("id", ""), f"{datetime.now(TZ):%Y-%m-%d %H:%M}", ""
             print("   publicado", pub)
         except Exception as e:
@@ -203,6 +212,24 @@ def main():
         cambios = True
     if cambios and not dry:
         guardar(filas)
+    return cambios
+
+
+def main():
+    dry = "--dry" in sys.argv
+    if "--check" in sys.argv:
+        return check()
+    # --loop N: repite cada 60 s durante N segundos (GitHub atrasa el cron; así se publica a la hora)
+    seg = 0
+    if "--loop" in sys.argv:
+        seg = int(sys.argv[sys.argv.index("--loop") + 1])
+    fin = time.time() + seg
+    while True:
+        if ciclo(dry) and not dry and os.environ.get("GITHUB_ACTIONS"):
+            os.system('git add calendario.csv && git -c user.name=publicador -c user.email=publicador@users.noreply.github.com commit -qm "calendario: estado actualizado" && git pull -q --rebase && git push -q')
+        if time.time() + 60 > fin:
+            break
+        time.sleep(60)
 
 
 if __name__ == "__main__":
