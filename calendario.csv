@@ -4,7 +4,7 @@ c1-antes-vs-hoy,2026-11-18 09:30,CARRUSEL,c1-antes-vs-hoy-01.jpg|c1-antes-vs-hoy
 h-11-18-11,2026-11-18 11:30,HISTORIA,historia-s03.jpg,,,error,,,HTTP 400: API access blocked.
 h-11-18-15,2026-11-18 15:00,HISTORIA,historia-s10.jpg,,,error,,,HTTP 400: API access blocked.
 h-11-18-19,2026-11-18 19:00,HISTORIA,historia-s04.jpg,,,error,,,HTTP 400: API access blocked.
-h-11-18-21,2026-11-18 21:30,HISTORIA,historia-s01.jpg,,,programado,,,
+h-11-18-21,2026-11-18 21:30,HISTORIA,historia-s01.jpg,,,error,,,HTTP 400: API access blocked.
 h-11-19-09,2026-11-19 09:00,HISTORIA,historia-s05.jpg,,,programado,,,
 h-11-19-11,2026-11-19 11:30,HISTORIA,historia-s06.jpg,,,programado,,,
 c2-como-funciona,2026-11-19 13:00,CARRUSEL,c2-como-funciona-01.jpg|c2-como-funciona-02.jpg|c2-como-funciona-03.jpg|c2-como-funciona-04.jpg|c2-como-funciona-05.jpg|c2-como-funciona-06.jpg,,c2-como-funciona.txt,programado,,,
