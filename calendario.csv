@@ -25,5 +25,5 @@ h-11-22-09,2026-11-22 09:00,HISTORIA,historia-s08.jpg,,,error,,,HTTP 400: API ac
 h-11-22-11,2026-11-22 11:30,HISTORIA,historia-s09.jpg,,,error,,,HTTP 400: API access blocked.
 c4-orfelia,2026-11-22 13:00,CARRUSEL,c4-orfelia-01.jpg|c4-orfelia-02.jpg|c4-orfelia-03.jpg|c4-orfelia-04.jpg|c4-orfelia-05.jpg|c4-orfelia-06.jpg,,c4-orfelia.txt,error,,,HTTP 400: API access blocked.
 h-11-22-15,2026-11-22 15:00,HISTORIA,historia-s03.jpg,,,error,,,HTTP 400: API access blocked.
-h-11-22-19,2026-11-22 19:00,HISTORIA,historia-s02.jpg,,,programado,,,
+h-11-22-19,2026-11-22 19:00,HISTORIA,historia-s02.jpg,,,error,,,HTTP 400: API access blocked.
 h-11-22-21,2026-11-22 21:30,HISTORIA,historia-s10.jpg,,,programado,,,
